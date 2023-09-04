@@ -1,4 +1,4 @@
-//Method 1 (Using HashMap)
+// Method 1 (Using HashMap)
 
 class Solution{
     public static void countFrequecy(int[] arr){
