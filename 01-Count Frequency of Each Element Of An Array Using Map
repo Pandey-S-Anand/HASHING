@@ -3,9 +3,9 @@
 class Solution{
     public static void countFrequecy(int[] arr){
         System.out.println("Frequency :");
-        int n =arr.length;
-	   
-	      HashMap<Integer,Integer>hm=new HashMap<>(n);
+        int n =arr.length;   
+	HashMap<Integer,Integer>hm=new HashMap<>(n);
+
         for(int i=0;i<n;i++)
           if(hm.containsKey(arr[i]))
             hm.put(arr[i],hm.get(arr[i])+1);
@@ -49,6 +49,7 @@ class Solution{
       System.out.println("Frequency :");
       int n =arr.length;
       LinkedHashMap<Integer,Integer>lhm=new LinkedHashMap<>(n);
+
       for(int i=0;i<n;i++)
         if(lhm.containsKey(arr[i]))
            lhm.put(arr[i],lhm.get(arr[i])+1);
@@ -67,7 +68,7 @@ class Solution{
    public static void countFrequecy(int[] arr){
       System.out.println("Frequency :");
       int n =arr.length;
-      TreeMap<Integer,Integer>tm=new TreeMap<>(n);
+      TreeMap<Integer,Integer>tm=new TreeMap<>();
 
       for(int i=0;i<n;i++)
         if(tm.containsKey(arr[i]))
@@ -76,6 +77,6 @@ class Solution{
            tm.put(arr[i],1);
         
       for(int key :tm.keySet())
-	      System.out.println(key+"==>"+tm.get(key)); 
+	System.out.println(key+"==>"+tm.get(key)); 
    }
 }
