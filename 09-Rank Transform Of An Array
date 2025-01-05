@@ -1,0 +1,80 @@
+//Bruteforce Approach
+
+class Solution {
+    public int[] arrayRankTransform(int[] arr) {
+        Map<Integer, Integer> valueToRankMap = new HashMap<>();
+        int[] tempArr = arr.clone();
+        Arrays.sort(tempArr);
+        int rank = 1;
+
+        // Assign ranks to unique values
+        for (int num : tempArr) {
+            if (!valueToRankMap.containsKey(num)) {
+                valueToRankMap.put(num, rank++);
+            }
+        }
+
+        // Transform the original array to its rank representation
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = valueToRankMap.get(arr[i]);
+        }
+
+        return arr;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public int[] arrayRankTransform(int[] arr) {
+        Map<Integer, Integer> valueRankMap = new HashMap<>();
+        Set<Integer> sortedSet = new TreeSet<>();
+        int rank = 1;
+
+        // Add elements to the sorted set (which automatically sorts them)
+        for (int num : arr) {
+            sortedSet.add(num);
+        }
+
+        // Assign ranks to each unique element
+        for (int num : sortedSet) {
+            valueRankMap.put(num, rank++);
+        }
+
+        // Transform the original array based on the assigned ranks
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = valueRankMap.get(arr[i]);
+        }
+
+        return arr;
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    public int[] arrayRankTransform(int[] arr) {
+        int rank = 1;
+        Map<Integer, Integer> valueRankMap = new TreeMap<>();
+
+        // Initialize the map with the values from arr
+        for (int num : arr) {
+            valueRankMap.put(num, 0);
+        }
+
+        // Assign ranks to each unique value
+        for (int num : valueRankMap.keySet()) {
+            valueRankMap.put(num, rank++);
+        }
+
+        // Transform the original array based on the assigned ranks
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = valueRankMap.get(arr[i]);
+        }
+
+        return arr;
+    }
+}
