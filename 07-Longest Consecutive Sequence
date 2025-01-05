@@ -1,0 +1,187 @@
+//Bruteforce Approach
+
+class Solution {
+    public int longestConsecutive(int[] arr) {
+        int maxLength = 0;
+
+        for (int num : arr) {
+            int currentLength = 1;
+
+            // look left
+            int previous = num - 1;
+            while (linearSearch(arr, previous)) {
+                currentLength++;
+                previous--;
+            }
+
+            // look right
+            int next = num + 1;
+            while (linearSearch(arr, next)) {
+                currentLength++;
+                next++;
+            }
+
+            maxLength = Math.max(currentLength, maxLength);
+        }
+
+        return maxLength;
+    }
+
+    private boolean linearSearch(int[] arr, int key) {
+        int i = 0, j = arr.length - 1;
+
+        while (i <= j) {
+            if (arr[i] == key || arr[j] == key) {
+                return true;
+            }
+
+            i++;
+            j--;
+        }
+
+        return false;
+    }
+}
+
+
+//Improved Approach
+
+class Solution {
+    public int longestConsecutive(int[] arr) {
+        int maxLength = 0;
+        Set<Integer> sequenceTrackerSet = new HashSet<>();
+
+        for (int num : arr) {
+            sequenceTrackerSet.add(num);
+        }
+
+        for (int num : arr) {
+            int currentLength = 1;
+
+            // look left
+            int previous = num - 1;
+            while (sequenceTrackerSet.contains(previous)) {
+                currentLength++;
+                previous--;
+            }
+
+            // look right
+            int next = num + 1;
+            while (sequenceTrackerSet.contains(next)) {
+                currentLength++;
+                next++;
+            }
+
+            maxLength = Math.max(currentLength, maxLength);
+        }
+
+        return maxLength;
+    }
+}
+
+
+// Good Approach
+
+class Solution {
+    public int longestConsecutive(int[] arr) {
+        Map<Integer, Boolean> sequenceStarterMap = new HashMap<>();
+
+        // Initialize the map, marking all numbers as potential sequence starters
+        for (int num : arr) {
+            sequenceStarterMap.put(num, true);
+        }
+
+        // Mark numbers that are not the start of any sequence
+        for (int key : sequenceStarterMap.keySet()) {
+            if (sequenceStarterMap.containsKey(key - 1)) {
+                sequenceStarterMap.put(key, false); // Not a sequence starter
+            }
+        }
+
+        // After this loop, the map only contains elements that are the start of a sequence.
+        int maxLength = 0;
+
+        for (int key : sequenceStarterMap.keySet()) {
+            int currentLength = 1;
+            int next = key + 1;
+
+            while (sequenceStarterMap.containsKey(next)) {
+                currentLength++;
+                next++;
+            }
+
+            maxLength = Math.max(maxLength, currentLength);
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public int longestConsecutive(int[] arr) {
+        int maxLength = 0;
+        Set<Integer> sequenceTrackerSet = new HashSet<>();
+
+        for (int num : arr) {
+            sequenceTrackerSet.add(num);
+        }
+
+        for (int num : arr) {
+            int currentLength = 1;
+
+            // look left
+            int previous = num - 1;
+            while (sequenceTrackerSet.contains(previous)) {
+                currentLength++;
+                sequenceTrackerSet.remove(previous);
+                previous--;
+            }
+
+            // look right
+            int next = num + 1;
+            while (sequenceTrackerSet.contains(next)) {
+                currentLength++;
+                sequenceTrackerSet.remove(next);
+                next++;
+            }
+
+            maxLength = Math.max(currentLength, maxLength);
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int longestConsecutive(int[] arr) {
+        Set<Integer> sequenceTrackerSet = new HashSet<>();
+
+        for (int num : arr) {
+            sequenceTrackerSet.add(num);
+        }
+
+        int maxLength = 0;
+
+        for (int num : sequenceTrackerSet) {
+            if (!sequenceTrackerSet.contains(num - 1)) { // Check if 'key' is the start of a sequence
+                int currentLength = 1;
+                int next = num + 1;
+
+                while (sequenceTrackerSet.contains(next)) {
+                    currentLength++;
+                    next++;
+                }
+
+                maxLength = Math.max(maxLength, currentLength);
+            }
+        }
+
+        return maxLength;
+    }
+}
