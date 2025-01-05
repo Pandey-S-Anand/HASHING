@@ -1,0 +1,118 @@
+// Bruteforce Approach
+
+class Solution {
+    public static boolean findsum(int arr[], int n) {
+        int[] prefixSum = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            if (i == 0) {
+                prefixSum[i] = arr[i];
+            } else {
+                prefixSum[i] = prefixSum[i - 1] + arr[i];
+            }
+        }
+
+        int subarraySum = 0;
+        for (int start = 0; start < n; start++) {
+            for (int end = start; end < n; end++) {
+                if (findSubarraySum(prefixSum, start, end) == 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static int findSubarraySum(int[] prefixSum, int startIndex, int endIndex) {
+        if (startIndex == 0) {
+            return prefixSum[endIndex];
+        }
+
+        return prefixSum[endIndex] - prefixSum[startIndex - 1];
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public static boolean findsum(int arr[], int n) {
+        for (int start = 0; start < n; start++) {
+            int subArraySum = 0;
+            for (int end = start; end < n; end++) {
+                subArraySum += arr[end];
+
+                if (subArraySum == 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    static boolean findsum(int arr[], int n) {
+        Set<Integer> seenPrefixSums = new HashSet<>();
+        int prefixSum = 0;
+
+        for (int val : arr) {
+            prefixSum += val;
+
+            if (prefixSum == 0) {
+                return true;
+            }
+            // if a prefix sum repeats, it means there is a subarray between the previous occurrence and the current index that sums to zero.
+            if (seenPrefixSums.contains(prefixSum)) {
+                return true;
+            } else {
+                seenPrefixSums.add(prefixSum);
+            }
+        }
+
+        return false;
+    }
+}
+
+
+/*
+Let's break down the method's implicit check for all subarrays:
+
+Possible Subarrays and Their Sums:
+
+Subarrays starting from index 0:
+
+[1] : Sum = 1
+[1, 2] : Sum = 3
+[1, 2, 3] : Sum = 6
+[1, 2, 3, 4] : Sum = 10
+
+Subarrays starting from index 1:
+
+[2] : Sum = 2 
+[2, 3] : Sum = 5 
+[2, 3, 4] : Sum = 9 
+
+Subarrays starting from index 2:
+
+[3] : Sum = 3 
+[3, 4] : Sum = 7
+
+Subarrays starting from index 3:
+
+[4] : Sum = 7
+
+
+In first iteration the direct lookup(for prefixSum= 1) is for subarray [1] and set lookup(for repitition of prefixSum=1) is for [] subarray
+
+In second iteration  the direct lookup(for prefixSum= 3) is for subarray [1 ,2] and  the set lookup (for repitition of prefixSum= 3) is for subarray  [2] , none of these subarray sum to 0 so ignored
+
+In third iteration the direct lookup(for prefixSum= 6) is for subarray[1 ,2 ,3] and set lookup(for repitition of prefixSum= 6) is for subarrays [2, 3] and [3] ,  none of these subarray sum to 0 so ignored
+
+In fourth iteration the the direct lookup(for prefixSum= 10) is for subarray [1 , 2, 3, 4] and the set lookup (for repitition of prefixSum= 10) is for subarrays [2, 3, 4] , [3, 4] and [4] but none of these subarray sum to 0 so ignored
+*/
