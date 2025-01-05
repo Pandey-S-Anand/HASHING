@@ -1,0 +1,190 @@
+// Bruteforce Approach
+
+class Solution {
+    public int subarraySum(int[] arr, int k) {
+        int[] prefixSum = new int[arr.length];
+
+        for (int i = 0; i < arr.length; i++) {
+            if (i == 0) {
+                prefixSum[i] = arr[i];
+            } else {
+                prefixSum[i] = prefixSum[i - 1] + arr[i];
+            }
+        }
+
+        int count = 0;
+        for (int start = 0; start < arr.length; start++) {
+            for (int end = start; end < arr.length; end++) {
+                if (findSubarraySum(prefixSum, start, end) == k) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private int findSubarraySum(int[] prefixSum, int startIndex, int endIndex) {
+        if (startIndex == 0) {
+            return prefixSum[endIndex];
+        }
+
+        return prefixSum[endIndex] - prefixSum[startIndex - 1];
+    }
+}
+
+
+// Better Approach
+
+class Solution {
+    public int subarraySum(int[] arr, int k) {
+        int count = 0;
+        for (int start = 0; start < arr.length; start++) {
+            int subArraySum = 0;
+            for (int end = start; end < arr.length; end++) {
+                subArraySum += arr[end];
+
+                if (subArraySum == k) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int subarraySum(int[] arr, int k) {
+        Map<Integer, Integer> sumFrequencyMap = new HashMap<>();
+        int count = 0, prefixSum = 0;
+
+        for (int num : arr) {
+            prefixSum += num;
+
+            if (prefixSum == k) {
+                count++;
+            }
+
+            if (sumFrequencyMap.containsKey(prefixSum - k)) {
+                count += sumFrequencyMap.get(prefixSum - k);
+            }
+
+            sumFrequencyMap.put(prefixSum, sumFrequencyMap.getOrDefault(prefixSum, 0) + 1);
+        }
+
+        return count;
+    }
+}
+
+
+/*
+
+int[] arr = {3, 0, 7 ,2 ,-3 ,1 ,4 ,2}; and k = 7
+Let's break down the method's implicit check for all subarrays:
+
+Possible Subarrays and Their Sums:
+
+Subarrays starting from index 0:
+
+[3] : Sum = 3
+[3, 0] : Sum = 3
+[3, 0, 7] : Sum = 10
+[3, 0, 7, 2] : Sum = 12
+[3, 0, 7, 2, -3] : Sum= 9
+[3, 0, 7, 2, -3 ,1] : Sum= 10
+[3, 0, 7, 2, -3, 1, 4]: Sum= 14
+[3, 0, 7, 2, -3, 1, 4 , 2]: Sum= 16
+
+
+Subarrays starting from index 1:
+
+[0] : Sum = 0 
+[0, 7] : Sum = 7 
+[0, 7, 2] : Sum = 9
+[0, 7, 2, -3] : Sum = 6
+[0, 7, 2, -3, 1] : Sum = 7
+[0, 7, 2, -3, 1, 4] : Sum = 11
+[0, 7, 2, -3, 1, 4, 2] : Sum = 13
+
+Subarrays starting from index 2:
+
+[7] : Sum = 7 
+[7, 2] : Sum = 9 
+[7, 2, -3] : Sum = 6
+[7, 2, -3, 1] : Sum = 7
+[7, 2, -3, 1, 4]  : Sum = 15
+[7, 2, -3, 1, 4 , 2] : Sum = 17
+
+
+Subarrays starting from index 3: 
+
+[2] : Sum = 2 
+[2, -3] : Sum = -1 
+[2, -3, 1] : Sum = 0
+[2, -3, 1, 4] : Sum = 4
+[2, -3, 1, 4, 2]  : Sum = 6
+
+
+Subarrays starting from index 4:
+[-3] : Sum = -3
+[-3, 1] : Sum = -2 
+[-3, 1, 4] : Sum = 2
+[-3, 1, 4, 2] : Sum = 4
+
+
+Subarrays starting from index 5: 
+
+[1] : Sum = 1
+[1, 4] : Sum = 5 
+[1, 4, 2] : Sum = 7
+
+
+Subarrays starting from index 6:
+
+[4] : Sum = 4
+[4, 2] : Sum = 6 
+
+
+Subarrays starting from index 7: 
+
+[2] : Sum = 2
+
+
+Observation :
+
+In first iteration the direct lookup(for prefixSum= 3) is for subarray [3] (doesnot sum to 7) and map lookup(for repetition of (prefixSum-7) i.e -4) is for [] subarray,
+which does not sum to 7 so ignored. (Hence count=0 and Map:{3:1})
+
+
+In second iteration  the direct lookup(for prefixSum= 3) is for subarray [3 ,0] (doesnot sum to 7) and  the map lookup (for repetition of (prefixSum-7) i.e -4) is for subarray  [0] ,
+which does not sum to 7 so ignored. (Hence count =0 and Map: {3:2}) 
+
+
+In third iteration the direct lookup(for prefixSum= 10) is for subarray[3 ,0 ,7] (doesnot sum to 7) and the map lookup(for repetition of (prefixSum-7)= 3) is for subarrays [0, 7] and [7] ,
+both of these subarrays sum to 7 so include it. (i.e count=0+1+1= 2 i.e [0, 7] and [7] and Map: {3:2,10:1})
+
+
+In fourth iteration the the direct lookup(for prefixSum= 12) is for subarray [3 , 0, 7, 2] (doesnot sum to 7) and the map lookup (for repetition of (prefixSum-7)= 5) is for subarrays [0, 7, 2] , [7, 2] and [2]  
+but none of these subarrays sum to 7 so ignored (i.e count=2 i.e i.e [0, 7] and [7] and Map: {3:2,10:1,12:1})
+
+
+In fifth iteration the the direct lookup(for prefixSum= 9) is for subarray [3, 0, 7, 2, -3] (doesnot sum to 7) and the map lookup (for repetition of (prefixSum-7)= 2) is for subarrays [0, 7, 2, -3] , [7, 2, -3] and [2, -3] and [-3]  
+but none of these subarray sum to 7 so ignored (i.e count=2 i.e [0, 7] and [7] and Map: {3:2,10:1,12:1,9:1})
+
+
+In sixth iteration the the direct lookup(for prefixSum= 10) is for subarray [3, 0, 7, 2, -3 ,1] (doesnot sum to 7)  and the map lookup (for repetition of (prefixSum-7)= 3) is for subarrays [0, 7, 2, -3, 1], [7, 2, -3, 1] and [2, -3, 1] and [-3, 1] ,
+two of these subarray sum to 7 (i.e count=2+1+1=4 i.e [0, 7], [7], [0, 7, 2, -3, 1] and [7, 2, -3, 1] and Map: {3:2,10:2,12:1,9:1})
+
+
+In seventh iteration the the direct lookup(for prefixSum= 14) is for subarray [3, 0, 7, 2, -3, 1, 4] (doesnot sum to 7)  and the map lookup (for repetition of (prefixSum-7)= 7) is for subarrays [0, 7, 2, -3, 1, 4] , [7, 2, -3, 1, 4] , [2, -3, 1, 4] , [-3, 1, 4] , [1, 4] and [4] ,
+None of these subarray sum to 7 (i.e count=4 i.e [0, 7] ,[7], [0, 7, 2, -3, 1] and [7, 2, -3, 1] and Map: {3:2,10:2,12:1,9:1,14:1})
+
+
+In eight iteration the the direct lookup(for prefixSum= 16) is for subarray [3, 0, 7, 2, -3, 1, 4 , 2] (doesnot sum to 7)  and the map lookup (for repetition of (prefixSum-7)= 9) is for subarrays [0, 7, 2, -3, 1, 4, 2] , [7, 2, -3, 1, 4 , 2] , [2, -3, 1, 4 , 2]  , [-3, 1, 4, 2] , [1, 4, 2] , [4, 2] and [2] 
+,one of these subarray sum to 7 (i.e count=4 + 1 = 5  i.e [0, 7] ,[7], [0, 7, 2, -3, 1], [7, 2, -3, 1] and [1, 4, 2] and Map: {3:2,10:2,12:1,9:1,14:1,16:1})
+
+*/
