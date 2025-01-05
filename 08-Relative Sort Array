@@ -1,0 +1,74 @@
+//Bruteforce Approach
+
+class Solution {
+    public int[] relativeSortArray(int[] arr1, int[] arr2) {
+        int index = 0;
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
+
+        // Count frequency of each number in arr1
+        for (int num : arr1) {
+            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
+        }
+
+        // First, place numbers from arr2 in the correct order
+        for (int num : arr2) {
+            int frequency = frequencyMap.get(num);
+            while (frequency != 0) {
+                arr1[index++] = num;
+                frequency--;
+            }
+            frequencyMap.remove(num);
+        }
+
+        // Store the index where remaining elements should start being sorted
+        int remainingStartIndex = index;
+
+        // Add remaining numbers that were not in arr2
+        for (int num : frequencyMap.keySet()) {
+            int frequency = frequencyMap.get(num);
+            while (frequency != 0) {
+                arr1[index++] = num;
+                frequency--;
+            }
+        }
+
+        // Sort the remaining numbers
+        Arrays.sort(arr1, remainingStartIndex, arr1.length);
+
+        return arr1;
+    }
+}
+
+
+
+//Optimal Approach
+
+class Solution {
+    public int[] relativeSortArray(int[] arr1, int[] arr2) {
+        int index = 0;
+        Map<Integer, Integer> frequencyMap = new TreeMap<>();
+
+        for (int num : arr1) {
+            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
+        }
+
+        for (int num : arr2) {
+            int frequency = frequencyMap.get(num);
+            while (frequency != 0) {
+                arr1[index++] = num;
+                frequency--;
+            }
+            frequencyMap.remove(num);
+        }
+
+        for (int num : frequencyMap.keySet()) {
+            int frequency = frequencyMap.get(num);
+            while (frequency != 0) {
+                arr1[index++] = num;
+                frequency--;
+            }
+        }
+
+        return arr1;
+    }
+}
