@@ -1,0 +1,75 @@
+//Bruteforce Approach
+
+class Solution {
+    public int fourSumCount(int[] arr1, int[] arr2, int[] arr3, int[] arr4) {
+        int fourSumCount = 0;
+        for (int num1 : arr1) {
+            for (int num2 : arr2) {
+                for (int num3 : arr3) {
+                    for (int num4 : arr4) {
+                        if (num1 + num2 + num3 + num4 == 0) {
+                            fourSumCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return fourSumCount;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public int fourSumCount(int[] arr1, int[] arr2, int[] arr3, int[] arr4) {
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
+        int fourSumCount = 0;
+
+        for (int num4 : arr4) {
+            frequencyMap.put(num4, frequencyMap.getOrDefault(num4, 0) + 1);
+        }
+
+        for (int num1 : arr1) {
+            for (int num2 : arr2) {
+                for (int num3 : arr3) {
+                    int remainingSum = 0 - (num1 + num2 + num3);
+
+                    if (frequencyMap.containsKey(remainingSum)) {
+                        fourSumCount += frequencyMap.get(remainingSum);
+                    }
+                }
+            }
+        }
+
+        return fourSumCount;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public int fourSumCount(int[] arr1, int[] arr2, int[] arr3, int[] arr4) {
+        Map<Integer, Integer> pairSumFrequencyMap = new HashMap<>();
+        int fourSumCount = 0;
+
+        for (int num1 : arr1) {
+            for (int num2 : arr2) {
+                pairSumFrequencyMap.put(num1 + num2, pairSumFrequencyMap.getOrDefault(num1 + num2, 0) + 1);
+            }
+        }
+
+        for (int num3 : arr3) {
+            for (int num4 : arr4) {
+                int remainingPairSum = 0 - (num3 + num4);
+                if (pairSumFrequencyMap.containsKey(remainingPairSum)) {
+                    fourSumCount += pairSumFrequencyMap.get(remainingPairSum);
+                }
+            }
+        }
+
+        return fourSumCount;
+    }
+}
