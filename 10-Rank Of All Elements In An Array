@@ -1,0 +1,27 @@
+class Solution {
+    public static void rankify(int[] arr) {
+        Map<Integer, Integer> frequencyMap = new TreeMap<>();
+        int rank = 1;
+
+        for (int num : arr) {
+            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
+        }
+
+        // Calculate average ranks
+        for (int num : frequencyMap.keySet()) {
+            int frequency = frequencyMap.get(num);
+            int count = frequency;
+            int sumOfRanks = 0;
+
+            while (count != 0) {
+                sumOfRanks += rank;
+                rank++;
+                count--;
+            }
+
+            float avgRank = (float) sumOfRanks / frequency;
+            System.out.println(num + " => " + avgRank);
+        }
+    }
+}
+
