@@ -1,0 +1,69 @@
+//Bruteforce Approach
+
+class Solution {
+    public static int lenOfLongSubarr(int arr[], int n, int k) {
+        int maxLength = 0;
+        for (int start = 0; start < n; start++) {
+            for (int end = start; end < n; end++) {
+                int sumArraySum = 0;
+                for (int range = start; range <= end; range++) {
+                    sumArraySum += arr[range];
+                }
+
+                if (sumArraySum == k) {
+                    maxLength = Math.max((end - start + 1), maxLength);
+                }
+            }
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Better Approach
+
+class Solution {
+    public static int lenOfLongSubarr(int arr[], int n, int k) {
+        int maxLength = 0;
+
+        for (int start = 0; start < n; start++) {
+            int subArraySum = 0;
+            for (int end = start; end < n; end++) {
+                subArraySum += arr[end];
+
+                if (subArraySum == k) {
+                    maxLength = Math.max((end - start + 1), maxLength);
+                }
+            }
+        }
+
+        return maxLength;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public static int lenOfLongSubarr(int arr[], int n, int k) {
+        Map<Integer, Integer> sumIndexMap = new HashMap<>();
+        int prefixSum = 0, maxLength = 0;
+
+        for (int i = 0; i < n; i++) {
+            prefixSum += arr[i];
+
+            if (prefixSum == k) {
+                maxLength = Math.max(i + 1, maxLength);
+            } else if (sumIndexMap.containsKey(prefixSum - k)) {
+                maxLength = Math.max(i - sumIndexMap.get(prefixSum - k), maxLength);
+            }
+
+            if (!sumIndexMap.containsKey(prefixSum)) {
+                sumIndexMap.put(prefixSum, i);
+            }
+        }
+
+        return maxLength;
+    }
+}
