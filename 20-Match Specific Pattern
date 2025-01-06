@@ -1,0 +1,112 @@
+//Bruteforce Approach
+
+/*
+Using only wordToPatternMap is insufficient because it allows multiple characters 
+from the 'word' to map to the same character in the 'pattern', violating the 
+bijective (one-to-one) mapping requirement.
+
+Example:
+Word: "abc"
+Pattern: "foo"
+
+- At index 0: Map 'a' → 'f' → wordToPatternMap = { 'a': 'f' }
+- At index 1: Map 'b' → 'o' → wordToPatternMap = { 'a': 'f', 'b': 'o' }
+- At index 2: Map 'c' → 'o' → wordToPatternMap = { 'a': 'f', 'b': 'o', 'c': 'o' }
+
+Here, 'b' and 'c' both map to 'o', which satisfies wordToPatternMap but 
+violates the bijective mapping rule.
+
+Why patternToWordMap is Needed:
+The second map ensures that no two different characters in the 'word' 
+map to the same character in the 'pattern'.
+
+This dual-mapping approach ensures a strictly one-to-one relationship.
+*/
+
+class GfG {
+    public static ArrayList<String> findMatchedWords(int n, ArrayList<String> dictionary, String pattern) {
+        ArrayList<String> matchingWords = new ArrayList<>();
+
+        for (String word : dictionary) {
+            if (doesWordMatchPattern(word, pattern)) {
+                matchingWords.add(word);
+            }
+        }
+
+        return matchingWords;
+    }
+
+    private static boolean doesWordMatchPattern(String word, String pattern) {
+        if (word.length() != pattern.length()) {
+            return false;
+        }
+
+        Map<Character, Character> wordToPatternMap = new HashMap<>();
+        Map<Character, Character> patternToWordMap = new HashMap<>();
+
+
+        for (int i = 0; i < word.length(); i++) {
+            if (wordToPatternMap.containsKey(word.charAt(i))) {
+                if (wordToPatternMap.get(word.charAt(i)) != pattern.charAt(i)) {
+                    return false;
+                }
+            } else {
+                if(patternToWordMap.containsKey(pattern.charAt(i))){
+                    return false;
+                }
+                wordToPatternMap.put(word.charAt(i), pattern.charAt(i));
+                patternToWordMap.put(pattern.charAt(i),word.charAt(i));
+            }
+        }
+
+        return true;
+    }
+}
+
+
+//Optimal Approach
+
+class GfG {
+    public static ArrayList<String> findMatchedWords(int n, ArrayList<String> dictionary, String pattern) {
+        ArrayList<String> matchingWords = new ArrayList<>();
+
+        // Iterate through each word in the dictionary
+        for (String word : dictionary) {
+            // Check if the current word matches the pattern
+            if (doesWordMatchPattern(word, pattern)) {
+                matchingWords.add(word); // Add the word to the result if it matches
+            }
+        }
+
+        return matchingWords; // Return the list of matching words
+    }
+
+    private static boolean doesWordMatchPattern(String word, String pattern) {
+        // If the lengths of the word and pattern differ, they cannot match
+        if (word.length() != pattern.length()) {
+            return false;
+        }
+
+        // Map to store the mapping of pattern characters to word characters
+        Map<Character, Character> patternToWordMap = new HashMap<>();
+
+        // Iterate through each character in the word and pattern
+        for (int i = 0; i < pattern.length(); i++) {
+            char patternChar = pattern.charAt(i); // Current character in the pattern
+            char wordChar = word.charAt(i); // Corresponding character in the word
+
+            // If the pattern character is already mapped
+            if (patternToWordMap.containsKey(patternChar)) {
+                // Check if the mapping is consistent with the current word character
+                if (patternToWordMap.get(patternChar) != wordChar) {
+                    return false; // If inconsistent, the word doesn't match the pattern
+                }
+            } else {
+                // If the pattern character is not mapped, create a new mapping
+                patternToWordMap.put(patternChar, wordChar);
+            }
+        }
+
+        return true; // If all characters match consistently, return true
+    }
+}
