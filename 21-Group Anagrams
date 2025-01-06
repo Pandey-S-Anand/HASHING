@@ -1,0 +1,88 @@
+// Bruteforce Approach
+
+class Solution {
+    public List<List<String>> groupAnagrams(String[] arr) {
+        List<List<String>> anagramGroups = new ArrayList<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            // If the current string is already grouped, skip it
+            if (arr[i] == null) {
+                continue;
+            }
+
+            List<String> anagramGroup = new ArrayList<>();
+            // Add the current string to its group
+            anagramGroup.add(arr[i]);
+
+            for (int j = i + 1; j < arr.length; j++) {
+                // Check if arr[j] is not null to ensure previously grouped strings are not considered again
+                if (arr[j] != null && areAnagram(arr[i], arr[j])) {
+                    anagramGroup.add(arr[j]); // Add the anagram to the current group
+                    arr[j] = null; // Mark the string as grouped
+                }
+            }
+            // Add the formed group to the list of anagram groups
+            anagramGroups.add(anagramGroup);
+        }
+
+        return anagramGroups;
+    }
+
+    private boolean areAnagram(String str1, String str2) {
+        if (str1.length() != str2.length()) {
+            return false;
+        }
+
+        int[] frequencyArray = new int[26];
+
+        for (int i = 0; i < str1.length(); i++) {
+            frequencyArray[str1.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i < str2.length(); i++) {
+            frequencyArray[str2.charAt(i) - 'a']--;
+        }
+
+        for (int i = 0; i < 26; i++) {
+            if (frequencyArray[i] != 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+
+//Optimal Approach
+
+class Solution {
+    public List<List<String>> groupAnagrams(String[] arr) {
+        // Map to store the sorted string as the key and its corresponding list of anagrams as the value
+        Map<String, List<String>> anagramGroups = new HashMap<>();
+
+        // Iterate through each string in the input array
+        for (String str : arr) {
+            // Convert the string into a character array to sort it
+            char[] charArray = str.toCharArray();
+
+            // Sort the character array alphabetically
+            Arrays.sort(charArray);
+
+            // Create a new string from the sorted character array . This serves as the key for grouping anagrams
+            String sortedWord = new String(charArray);
+
+            // Check if the sorted word already exists as a key in the map
+            if (anagramGroups.containsKey(sortedWord)) {
+                // If yes, add the current string to the existing list of anagrams
+                anagramGroups.get(sortedWord).add(str);
+            } else {
+                // If not, create a new list with the current string and add it to the map
+                anagramGroups.put(sortedWord, new ArrayList<>(Arrays.asList(str)));
+            }
+        }
+
+        // Return all the groups of anagrams
+        return new ArrayList<>(anagramGroups.values());
+    }
+}
